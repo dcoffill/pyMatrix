@@ -33,6 +33,7 @@ L=[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 #alright, the biggest problem so far is that the matrix is being reduced and the original list is being edited.  YOu really ought to keep seperate lists, and change new list
 
 ## (C) 2012 COFFILL INDUSTRIES, ALL RIGHTS RESERVED
+## Available under the terms of the GNU General Public License, Version 2
 
 class Matrix:
 	'This class implements matrices, and allows for some basic matrix operations'
@@ -51,7 +52,7 @@ class Matrix:
 		self.matrix = matrixL
 
 	def __repr__(self):
-		return 'Matrix' + str((self.matrix))
+		return 'Matrix(' + str((self.matrix)) + ')'
 
 	def __str__(self):
 		returnString = '' # initializes
@@ -131,22 +132,46 @@ class Matrix:
 
 	def __mul__(self, matrix2):
 		matrix1 = self
+		matrixVar = 0
 
 		matrix1Size = matrix1.size() # tuple of matrix size as m, n
 		matrix2Size = matrix2.size() # tuple of matrix size as m, n
 
-		matrix3 = Matrix.newMatrix(matrix1Size[0], matrix2Size[0]) # creates a matrix the size of the end result, aka with row # of 1st, col. # of 2nd.  should be matrix2Size[1]
+		matrix3 = Matrix.newMatrix(matrix1Size[0], matrix2Size[1]) # creates a matrix the size of the end result, aka with row # of 1st, col. # of 2nd
 
 		## validation code, ensures the matrices will multiply correctly
-		if matrix1Size[1] != matrix2Size[0]: # matrix 1's n must equal matrix 2's m value
-			raise ValueError('Ensure your matrices are of the correct size')
-		for i in range( len(matrix1)): # cycles through rows of 1st matrix
-			for j in range( len(matrix1[0])): # cycles through items of matrix1 rows
-				for k in range(len(matrix2[j])): # fails because it only performs 1 row operation?
-					print(str(matrix1[i][j]), str(matrix2[j][k]))
-					matrix3[i][j] = matrix1[i][j] * matrix2[j][k] # this line isn't quite right, methinks
-		return matrix3
+		if matrix1Size[1] != matrix2Size[0]:
+			raise ValueError('Ensure your two matrices are m * n and n *p!, respectively')
 
+		for i in range( len(matrix1)): # cycles through rows of matrix1
+			for j in range( len(matrix2[0])): # cycles through cols of matrix2
+				for k in range(len(matrix2)): # cycles through rows of matrix2
+					matrix3[i][j] += matrix1[i][k] * matrix2[k][j]
+		return matrix3
+	def __rmul__(self, scalar):
+		m, n = self.size()
+		matrix1 = self
+		matrix2 = Matrix.newMatrix(m, n)  #creates new matrix the size of the original
+		for i in range(len( matrix1) ): # cycles through rows
+			for j in range( len( matrix1[i]) ): # cycles through entries in rows
+				matrix2[i][j] = scalar * matrix1[i][j]
+		return matrix2
+
+
+	def identity(self, n):
+		identity = self.newMatrix(n, n)
+		for i in range(n):
+			identity[i][i] = 1
+		return identity
+
+	def dotproduct(self, matrix2):
+		matrix1T = self.transpose()
+
+		dotProduct = matrix1T * matrix2
+		return int(dotProduct[0][0])
+
+	def eigenValues(self):
+		pass
 
 
 m1 = Matrix([[1, 2, 3, 4], [5, 6, 7, 8]])
@@ -157,7 +182,12 @@ m4 = Matrix([[3], [4]])
 
 m5 = Matrix([[1, 2], [3, 4]])
 m6 = Matrix([[5], [6]])
+
+m7 = Matrix( [[5, 6], [7, 8]] )
+
+m8 = Matrix( [ [2, 3, 4], [1, 1, 2] ])
 ## TODO:
 ## If you're a masochist, get back to the row reducer
 ## Oh god, use a triple for loop to get multiplication
-## Github repo?
+## Eigenstuff?
+## Dot/inner product!
