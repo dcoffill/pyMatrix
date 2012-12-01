@@ -158,8 +158,8 @@ class Matrix:
 		return matrix2
 
 
-	def identity(self, n):
-		identity = self.newMatrix(n, n)
+	def identity(n):
+		identity = Matrix.newMatrix(n, n)
 		for i in range(n):
 			identity[i][i] = 1
 		return identity
